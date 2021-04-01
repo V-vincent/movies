@@ -27,7 +27,7 @@ class Movies extends Component {
     })
   }
   render() {
-    const { genres, selectedGenre } = this.state;
+    const { movies, genres, selectedGenre } = this.state;
     return (
       <div className="row">
         <div className="col-2">
@@ -38,7 +38,7 @@ class Movies extends Component {
           />
         </div>
         <div className="col-10">
-          <MoviesTable />
+          <MoviesTable movies={movies} />
         </div>
       </div>
     );
