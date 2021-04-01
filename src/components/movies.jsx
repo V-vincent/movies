@@ -36,11 +36,16 @@ class Movies extends Component {
     movies[index].liked = !movies[index].liked;
     this.setState({ movies });
   }
+  // 根据分类过滤数据
+  getPageData = () => {
+    const { selectedGenre, movies: allMovies } = this.state;
+    const filtered = selectedGenre && selectedGenre !== "全部电影" ?
+      allMovies.filter((item) => item.genres.indexOf(selectedGenre) >= 0) : allMovies;
+    return { totalCount: filtered.length, movies: filtered }
+  }
   render() {
-    const { movies, genres, selectedGenre } = this.state;
-    const selectMovies = movies.filter(item => {
-      return item.genres.indexOf(selectedGenre) !== -1;
-    })
+    const { genres, selectedGenre } = this.state;
+    const { totalCount, movies } = this.getPageData()
     return (
       <div className="row">
         <div className="col-2">
@@ -50,8 +55,15 @@ class Movies extends Component {
             onItemSelect={this.handleGenreSelect}
           />
         </div>
-        <div className="col-10">
-          <MoviesTable movies={selectMovies} onLike={this.handleLike} />
+        <div className="col">
+          {
+            totalCount ? (
+              <>
+                <p>一共有{totalCount}部相关的电影</p>
+                <MoviesTable movies={movies} onLike={this.handleLike} />
+              </>
+            ) : <div>没有相关电影</div>
+          }
         </div>
       </div>
     );

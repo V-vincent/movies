@@ -1,4 +1,5 @@
 import React from 'react';
+
 const TableHeader = ({ columns }) => {
   return (
     <thead>

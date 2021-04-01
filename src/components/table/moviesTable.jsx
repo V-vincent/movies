@@ -1,6 +1,7 @@
 import React from 'react';
 import Like from '../common/like';
-import TableHeader from './tableHeader'
+import TableHeader from './tableHeader';
+import TableBody from './tableBody';
 
 const MoviesTable = ({ movies, onLike }) => {
   const columns = [
@@ -29,7 +30,8 @@ const MoviesTable = ({ movies, onLike }) => {
     <div>
       <table className="table">
         <TableHeader columns={columns} />
-        <tbody>
+        <TableBody columns={columns} movies={movies} />
+        {/* <tbody>
           {movies.map((movie) => (
             <tr key={movie.id}>
               <td>{movie.title}</td>
@@ -40,7 +42,7 @@ const MoviesTable = ({ movies, onLike }) => {
               <td><Like liked={movie.liked} onClick={() => onLike(movie)} /></td>
             </tr>
           ))}
-        </tbody>
+        </tbody> */}
       </table>
     </div>
   );
