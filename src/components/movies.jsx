@@ -26,8 +26,21 @@ class Movies extends Component {
       selectedGenre: item
     })
   }
+  // 收藏操作
+  handleLike = (movie) => {
+    // console.log(movie)
+    // 使用不可变数据
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index] = { ...movies[index] };
+    movies[index].liked = !movies[index].liked;
+    this.setState({ movies });
+  }
   render() {
     const { movies, genres, selectedGenre } = this.state;
+    const selectMovies = movies.filter(item => {
+      return item.genres.indexOf(selectedGenre) !== -1;
+    })
     return (
       <div className="row">
         <div className="col-2">
@@ -38,7 +51,7 @@ class Movies extends Component {
           />
         </div>
         <div className="col-10">
-          <MoviesTable movies={movies} />
+          <MoviesTable movies={selectMovies} onLike={this.handleLike} />
         </div>
       </div>
     );
