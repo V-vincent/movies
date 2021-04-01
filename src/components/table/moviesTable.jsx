@@ -3,7 +3,7 @@ import Like from '../common/like';
 import TableHeader from './tableHeader';
 import TableBody from './tableBody';
 
-const MoviesTable = ({ movies, onLike }) => {
+const MoviesTable = ({ movies, onLike, onSort }) => {
   const columns = [
     {
       path: 'title',
@@ -29,7 +29,7 @@ const MoviesTable = ({ movies, onLike }) => {
   return (
     <div>
       <table className="table">
-        <TableHeader columns={columns} />
+        <TableHeader columns={columns} onSort={onSort} />
         <TableBody columns={columns} movies={movies} />
         {/* <tbody>
           {movies.map((movie) => (
