@@ -3,6 +3,7 @@ import { getGenres } from '../services/fakeGenreService';
 import { getMovies } from '../services/fakeMovieService';
 import ListGroup from './list/listGroup';
 import MoviesTable from './table/moviesTable';
+import Pagination from './common/pagination'
 
 class Movies extends Component {
   constructor() {
@@ -12,6 +13,8 @@ class Movies extends Component {
       genres: [], // 分类数组
       selectedGenre: "全部电影", // 当前选中分类
       averageSort: 0,
+      curPage: 1, // 当前页
+      pageSize: 5, // 每页数据条数
     }
   }
   // 在componentDidMount生命周期中异步获取数据
@@ -24,7 +27,8 @@ class Movies extends Component {
   }
   handleGenreSelect = (item) => {
     this.setState({
-      selectedGenre: item
+      selectedGenre: item,
+      curPage: 1,
     })
   }
   handleSort = (column) => {
@@ -45,13 +49,16 @@ class Movies extends Component {
     movies[index].liked = !movies[index].liked;
     this.setState({ movies });
   }
-  // 根据分类过滤数据
   getPageData = () => {
-    const { selectedGenre, movies: allMovies } = this.state;
+    const { selectedGenre, movies: allMovies, curPage, pageSize } = this.state;
+    // 过滤分类电影
     const filtered = selectedGenre && selectedGenre !== "全部电影" ?
       allMovies.filter((item) => item.genres.indexOf(selectedGenre) >= 0) : allMovies;
+    // 排序
     this.sortPageData(filtered);
-    return { totalCount: filtered.length, movies: filtered }
+    // 分页
+    const pageMovies = filtered.slice((curPage - 1) * pageSize, (curPage - 1) * pageSize + pageSize);
+    return { totalCount: filtered.length, movies: pageMovies }
   }
   // 排序
   sortPageData = (movies) => {
@@ -67,8 +74,24 @@ class Movies extends Component {
     }
     // console.log(movies);
   }
+  handlePrePage = () => {
+    let curPage = this.state.curPage;
+    curPage--;
+    if (curPage < 1) curPage = 1;
+    this.setState({
+      curPage: curPage,
+    })
+  }
+  handleNextPage = (totalCount) => {
+    let { curPage, pageSize } = this.state;
+    curPage++;
+    if (curPage > totalCount / pageSize) curPage = Math.floor(totalCount / pageSize);
+    this.setState({
+      curPage: curPage,
+    })
+  }
   render() {
-    const { genres, selectedGenre } = this.state;
+    const { curPage, pageSize, genres, selectedGenre } = this.state;
     const { totalCount, movies } = this.getPageData();
     return (
       <div className="row">
@@ -83,8 +106,18 @@ class Movies extends Component {
           {
             totalCount ? (
               <>
-                <p>一共有{totalCount}部相关的电影</p>
-                <MoviesTable movies={movies} onLike={this.handleLike} onSort={this.handleSort} />
+                <MoviesTable
+                  movies={movies}
+                  onLike={this.handleLike}
+                  onSort={this.handleSort}
+                />
+                <Pagination
+                  totalCount={totalCount}
+                  pageSize={pageSize}
+                  curPage={curPage}
+                  onPrePage={this.handlePrePage}
+                  onNextPage={this.handleNextPage}
+                />
               </>
             ) : <div>没有相关电影</div>
           }
